@@ -1,0 +1,14 @@
+pdf:
+  renderer: pymupdf_html
+  page_size: A4
+  include_evidence_appendix: true
+  include_review_appendix: true
+  required_sections:
+    - 技术领域
+    - 背景技术
+    - 待解决的技术问题
+    - 技术方案
+    - 有益效果
+    - 附图说明
+    - 具体实施方式
+    - 权利要求书草案

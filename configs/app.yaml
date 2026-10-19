@@ -1,0 +1,24 @@
+app:
+  name: LocalPatentAI
+  version: "0.1.0"
+  env: development
+  host: 127.0.0.1
+  port: 8080
+  log_level: INFO
+  enable_external_telemetry: false
+
+groups:
+  - code: algorithm
+    name: 算法组
+  - code: framework
+    name: 框架组
+  - code: cloud
+    name: 云组
+
+budgets:
+  max_revision_rounds: 2
+  max_llm_calls_per_task: 30
+  node_timeout_seconds: 120
+  task_timeout_seconds: 1800
+  max_context_tokens: 4096
+  max_upload_size_mb: 100

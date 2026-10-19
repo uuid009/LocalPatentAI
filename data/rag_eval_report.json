@@ -1,0 +1,65 @@
+{
+  "corpus_version": "synthetic-patent-cn-v1",
+  "question_set_version": "patent-eval-100-v1",
+  "total_questions": 100,
+  "answerable_questions": 90,
+  "unanswerable_questions": 10,
+  "embedding_model": "bge-large-zh-v1.5",
+  "reranker_backend": "local",
+  "retrieval_params": {
+    "bm25_top_k": 30,
+    "dense_top_k": 30,
+    "rrf_k": 60,
+    "eval_top_k": 5
+  },
+  "hardware_env": {
+    "platform": "Linux-5.4.0-100-generic-x86_64-with-glibc2.35",
+    "python": "3.11.0"
+  },
+  "ablation_results": [
+    {
+      "mode": "dense_only",
+      "top_k": 5,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 0.9352,
+      "ndcg_at_k": 0.9517,
+      "citation_precision": 0.8889,
+      "citation_coverage": 1.0,
+      "avg_latency_ms": 135.621,
+      "unanswerable_rejection_rate": 1.0
+    },
+    {
+      "mode": "bm25_only",
+      "top_k": 5,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "citation_precision": 1.0,
+      "citation_coverage": 1.0,
+      "avg_latency_ms": 0.269,
+      "unanswerable_rejection_rate": 1.0
+    },
+    {
+      "mode": "hybrid_rrf",
+      "top_k": 5,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 0.9722,
+      "ndcg_at_k": 0.9795,
+      "citation_precision": 0.9444,
+      "citation_coverage": 1.0,
+      "avg_latency_ms": 123.711,
+      "unanswerable_rejection_rate": 1.0
+    },
+    {
+      "mode": "hybrid_rrf_rerank",
+      "top_k": 5,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "citation_precision": 1.0,
+      "citation_coverage": 1.0,
+      "avg_latency_ms": 120.131,
+      "unanswerable_rejection_rate": 1.0
+    }
+  ]
+}

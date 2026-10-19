@@ -1,0 +1,23 @@
+llm:
+  provider: openai_compatible
+  base_url: http://127.0.0.1:8001/v1
+  model: Qwen3.8-27B-FP8
+  timeout_seconds: 120
+  max_retries: 2
+  weights_dir: /data/zch/models/Qwen3.8-27B-FP8
+
+embedding:
+  backend: local
+  model_id: bge-large-zh-v1.5
+  model_path: /data/zch/workspace/LocalPatentAI/models/bge-large-zh-v1.5
+  dimension: 1024
+  normalize: true
+  query_instruction: "为这个句子生成表示以用于检索："
+
+reranker:
+  backend: local
+  model_id: bge-reranker-v2-m3
+  model_path: /data/zch/workspace/LocalPatentAI/models/bge-reranker-v2-m3
+  max_candidates: 50
+  batch_size: 16
+  max_passage_chars: 1024

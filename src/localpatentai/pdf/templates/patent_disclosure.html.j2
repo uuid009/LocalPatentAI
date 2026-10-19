@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ draft.title }} - 专利技术交底书</title>
+</head>
+<body>
+  <!-- 1. 封面与版本元数据 -->
+  <h1>专利技术交底书（辅助生成草案）</h1>
+  <h2>发明名称：{{ draft.title }}</h2>
+  <p>
+    <strong>文档版本：</strong>v{{ draft.version }} |
+    <strong>生成时间：</strong>{{ generated_at }} |
+    <strong>工作流版本：</strong>{{ workflow_version }} |
+    <strong>推理模式：</strong>{{ "本地模型 (Qwen/vLLM)" if draft.generation_mode == "local_llm" else "Mock 离线测试模式" }}
+  </p>
+  <p><em>声明：{{ draft.disclaimer }}</em></p>
+  <hr />
+
+  <!-- 2. 专利正文各章节 -->
+  <h2>第一部分：专利技术交底书正文草案</h2>
+  {% for section in draft.sections %}
+  <h3>{{ loop.index }}. {{ section.title }}</h3>
+  <p>
+    {% if section.needs_confirmation %}
+    <strong>【待确认】</strong>
+    {% endif %}
+    {{ section.content | replace('\n', '<br/>') | safe }}
+    {% if section.evidence_ids %}
+    <span>（引用证据：{% for eid in section.evidence_ids %}[{{ eid }}]{% if not loop.last %}, {% endif %}{% endfor %}）</span>
+    {% endif %}
+  </p>
+  {% endfor %}
+
+  <!-- 3. 权利要求书草案 -->
+  <h2>第二部分：权利要求书草案（辅助草拟）</h2>
+  {% for claim in draft.claims %}
+  <p>
+    <strong>【权利要求 {{ claim.claim_number }}】</strong>
+    （{{ "独立权利要求" if claim.claim_type == "independent" else "从属权利要求，引用权利要求 " ~ (claim.depends_on | join(", ")) }}）<br/>
+    {% if claim.needs_confirmation %}<strong>【待确认】</strong>{% endif %}
+    {{ claim.full_text }}
+    {% if claim.evidence_ids %}
+    <span>（依据：{% for eid in claim.evidence_ids %}[{{ eid }}]{% if not loop.last %}, {% endif %}{% endfor %}）</span>
+    {% endif %}
+  </p>
+  {% endfor %}
+
+  <!-- 4. 说明书摘要草案 -->
+  {% if draft.abstract_text %}
+  <h2>第三部分：说明书摘要草案</h2>
+  <p>{{ draft.abstract_text }}</p>
+  {% endif %}
+
+  <hr />
+  <!-- 5. 内部审查附录：待确认问题清单、证据来源索引与质量审查结果 -->
+  <h2>内部审查附录 A：待确认问题清单</h2>
+  {% if draft.unresolved_questions %}
+  <ul>
+    {% for q in draft.unresolved_questions %}
+    <li>{{ q }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>当前无单独列出的待确认问题。</p>
+  {% endif %}
+
+  {% if include_evidence_appendix %}
+  <h2>内部审查附录 B：证据来源索引</h2>
+  {% if evidence_items %}
+  <table border="1" cellspacing="0" cellpadding="4">
+    <tr>
+      <th>证据编号</th>
+      <th>来源文档</th>
+      <th>页码</th>
+      <th>证据类型</th>
+      <th>支持状态</th>
+      <th>原文摘录与哈希校验</th>
+    </tr>
+    {% for item in evidence_items %}
+    <tr>
+      <td>[{{ item.evidence_id }}]</td>
+      <td>{{ item.document_name or item.document_id }}</td>
+      <td>第 {{ item.page_start or 1 }} 页</td>
+      <td>{{ item.evidence_type }}</td>
+      <td>{{ item.support_status }}</td>
+      <td>{{ item.quote[:220] }} (SHA256: {{ item.source_hash[:12] }})</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>本次任务无已关联的检索证据条目。</p>
+  {% endif %}
+  {% endif %}
+
+  {% if include_review_appendix and review_result %}
+  <h2>内部审查附录 C：自动质量审查结果</h2>
+  <p>
+    <strong>审查结论：</strong>{{ "通过" if review_result.passed else "未通过" }} |
+    <strong>阻断项：</strong>{{ review_result.blocking_count }} |
+    <strong>提示项：</strong>{{ review_result.warning_count }}
+  </p>
+  <p>{{ review_result.summary }}</p>
+  {% if review_result.issues %}
+  <ul>
+    {% for iss in review_result.issues %}
+    <li>[{{ iss.severity }}] ({{ iss.location }}) {{ iss.description }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endif %}
+</body>
+</html>

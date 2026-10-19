@@ -1,0 +1,12 @@
+retrieval:
+  index_version: v1
+  parser_version: v1.0
+  chunking:
+    chunk_size_tokens: 450
+    chunk_overlap_tokens: 80
+  hybrid:
+    bm25_top_k: 30
+    dense_top_k: 30
+    rrf_k: 60
+    reranker_candidates_limit: 50
+    reranker_top_n: 8
